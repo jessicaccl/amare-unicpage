@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Amare · Vista a sua história</title>
+<meta name="description" content="Amare · dez anos vestindo mulheres autênticas. Um espaço de moda atemporal, com atendimento exclusivo, feito por duas irmãs em Teresópolis." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=Inter:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet" />
+<style>/* =============================================================
+   AMARE · editorial afetivo
+   Fonte única de estilos (usada no app React e no preview.html)
+   Paleta vinho/rosewood + marfim quente · Fraunces / Inter / Parisienne
+   ============================================================= */
+
+:root {
+  /* Cor */
+  --paper:      #F6F0E9;   /* marfim quente (fundo) */
+  --paper-2:    #FBF7F1;   /* superfície mais clara */
+  --ink:        #2B2320;   /* café profundo (texto) */
+  --ink-soft:   #6B615A;   /* taupe (texto secundário) */
+  --wine:       #8C3B47;   /* acento: amor + herança */
+  --wine-deep:  #6E2C37;
+  --blush:      #EAD8D3;   /* tinta suave / hover */
+  --blush-2:    #F2E4DF;
+  --espresso:   #241E1B;   /* banda profunda */
+  --hairline:   #E4DAD0;   /* filetes */
+  --focus:      #8C3B47;
+
+  /* Tipografia */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --body:    'Inter', system-ui, -apple-system, sans-serif;
+  --script:  'Parisienne', 'Segoe Script', cursive;
+
+  /* Ritmo */
+  --fs: 1;                 /* multiplicador de fonte (acessibilidade) */
+  --maxw: 1240px;
+  --gutter: clamp(20px, 5vw, 72px);
+  --seam: #C9AFA6;         /* fio de costura */
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- reset enxuto ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: calc(1rem * var(--fs));
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+
+/* ---------- utilitários ---------- */
+.wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  transform: translateY(-160%);
+  background: var(--ink); color: var(--paper);
+  padding: 12px 18px; border-radius: 2px; letter-spacing: .04em;
+  transition: transform .25s var(--ease);
+}
+.skip-link:focus { transform: translateY(0); }
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.eyebrow {
+  font-family: var(--body);
+  font-size: calc(.72rem * var(--fs));
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--wine);
+  font-weight: 500;
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--wine); opacity: .6; }
+
+/* fio de costura · assinatura visual (seam) */
+.seam {
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 0;
+  border-left: 1px dashed var(--seam);
+  transform: translateX(-50%);
+  opacity: .5; pointer-events: none; z-index: 1;
+}
+.seam-node {
+  position: absolute; left: 50%; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--paper); border: 1px solid var(--wine);
+  transform: translate(-50%, -50%); z-index: 2;
+}
+
+/* reveal on scroll */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: .08s; }
+.reveal.d2 { transition-delay: .16s; }
+.reveal.d3 { transition-delay: .24s; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* =============================================================
+   HEADER
+   ============================================================= */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px var(--gutter);
+  transition: background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+  color: var(--paper);
+}
+.site-header.solid {
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  color: var(--ink);
+  box-shadow: 0 1px 0 var(--hairline);
+  backdrop-filter: saturate(1.1) blur(8px);
+}
+.brand {
+  font-family: var(--script);
+  font-size: calc(1.9rem * var(--fs));
+  line-height: 1; letter-spacing: .01em;
+}
+.brand small {
+  display: block; font-family: var(--body); font-size: calc(.56rem * var(--fs));
+  letter-spacing: .34em; text-transform: uppercase; opacity: .75; margin-top: 2px;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+/* =============================================================
+   HERO
+   ============================================================= */
+.hero {
+  position: relative; min-height: 100svh;
+  display: grid; align-items: end;
+  overflow: hidden; isolation: isolate;
+  color: var(--paper);
+}
+.hero__media { position: absolute; inset: 0; z-index: -2; }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.hero__media::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    /* leve escurecimento geral para uniformizar fundos claros e movimentados */
+    linear-gradient(0deg, rgba(20,15,13,.14), rgba(20,15,13,.14)),
+    /* topo: dá contraste ao header */
+    linear-gradient(180deg, rgba(20,15,13,.40) 0%, rgba(20,15,13,0) 30%),
+    /* base: véu forte onde vive o texto */
+    linear-gradient(0deg, rgba(20,15,13,.88) 0%, rgba(20,15,13,.66) 26%, rgba(20,15,13,.30) 52%, rgba(20,15,13,0) 82%);
+}
+/* placeholder quando a imagem não carrega (chat/preview isolado) */
+.hero__media { background:
+    radial-gradient(120% 90% at 70% 20%, #6E4A46 0%, #3A2A28 55%, #241E1B 100%); }
+
+.hero__inner { padding: 0 var(--gutter) clamp(48px, 8vh, 96px); width: 100%; max-width: var(--maxw); margin-inline: auto; z-index: 1; }
+.hero .eyebrow { color: #F0Dcd6; }
+.hero .eyebrow::before { background: #E7C7C0; }
+/* proteção de legibilidade sobre qualquer imagem (clara, escura ou P&B) */
+.hero__inner .eyebrow,
+.hero__inner h1,
+.hero__inner .hero__sub,
+.hero__inner .link-underline { text-shadow: 0 2px 28px rgba(18,13,11,.6), 0 1px 3px rgba(18,13,11,.45); }
+.hero__scroll { text-shadow: 0 1px 10px rgba(18,13,11,.6); }
+.hero h1 {
+  font-family: var(--display);
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-size: clamp(2.9rem, 9vw, 6.6rem);
+  line-height: .98; letter-spacing: -.015em;
+  margin: 18px 0 0; max-width: 15ch;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+}
+.hero h1 em { font-style: italic; font-variation-settings: "SOFT" 60, "WONK" 1; }
+.hero__sub {
+  margin-top: 22px; max-width: 42ch;
+  font-size: clamp(1.02rem, 1.6vw, 1.24rem); color: #F3E7E2; font-weight: 300;
+}
+.hero__cta { margin-top: 34px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+.hero__scroll {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: #EAD9D3; z-index: 1;
+}
+.hero__scroll span.line { width: 1px; height: 40px; background: linear-gradient(var(--paper), transparent); animation: drip 2.4s var(--ease) infinite; }
+@keyframes drip { 0% { transform: scaleY(.2); transform-origin: top; opacity: 0; } 40% { opacity: 1; } 100% { transform: scaleY(1); transform-origin: top; opacity: 0; } }
+
+/* Ken Burns */
+.kenburns { animation: kb 22s ease-in-out infinite alternate; }
+@keyframes kb { from { transform: scale(1.02); } to { transform: scale(1.12) translateY(-1.5%); } }
+@media (prefers-reduced-motion: reduce) { .kenburns { animation: none; } .hero__scroll span.line { animation: none; } }
+
+/* =============================================================
+   BOTÕES
+   ============================================================= */
+.btn {
+  --bg: var(--ink); --fg: var(--paper);
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--bg); color: var(--fg);
+  padding: 15px 30px; border-radius: 2px;
+  font-size: calc(.82rem * var(--fs)); letter-spacing: .12em; text-transform: uppercase; font-weight: 500;
+  position: relative; overflow: hidden;
+  transition: transform .5s var(--ease), background .4s var(--ease), color .4s var(--ease);
+}
+.btn::after { content: ""; position: absolute; inset: 0; background: var(--wine); transform: translateY(101%); transition: transform .5s var(--ease); z-index: 0; }
+.btn > * { position: relative; z-index: 1; }
+.btn:hover { color: #fff; }
+.btn:hover::after { transform: translateY(0); }
+.btn--wine { --bg: var(--wine); --fg: #fff; }
+.btn--wine::after { background: var(--wine-deep); }
+.btn--ghost { --bg: transparent; --fg: var(--ink); border: 1px solid var(--ink); }
+.btn--ghost.on-dark { --fg: var(--paper); border-color: color-mix(in srgb, var(--paper) 55%, transparent); }
+
+.link-underline {
+  position: relative; letter-spacing: .1em; text-transform: uppercase; font-size: .78rem; font-weight: 500;
+  color: inherit; text-decoration: none; padding-bottom: 3px;
+}
+.link-underline::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(.0); transform-origin: left; transition: transform .4s var(--ease); }
+.link-underline:hover::after { transform: scaleX(1); }
+
+/* =============================================================
+   MANIFESTO
+   ============================================================= */
+.manifesto { position: relative; padding: clamp(90px, 14vh, 168px) 0; background: var(--paper); }
+.manifesto .grid { display: grid; grid-template-columns: minmax(0, .42fr) minmax(0, .58fr); gap: clamp(28px, 6vw, 92px); align-items: start; }
+.manifesto__lede {
+  font-family: var(--display); font-weight: 300; font-optical-sizing: auto;
+  font-size: clamp(1.5rem, 3vw, 2.35rem); line-height: 1.28; letter-spacing: -.01em; color: var(--ink);
+}
+.manifesto__lede .accent { color: var(--wine); font-style: italic; }
+.manifesto__body { font-size: clamp(1rem, 1.3vw, 1.1rem); color: var(--ink-soft); max-width: 52ch; }
+.manifesto__body p + p { margin-top: 1.1em; }
+.pillars { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 10px 26px; }
+.pillars span {
+  font-family: var(--display); font-style: italic; font-size: 1.12rem; color: var(--ink);
+  display: inline-flex; align-items: center; gap: 26px;
+}
+.pillars span:not(:last-child)::after { content: "·"; color: var(--wine); }
+
+/* =============================================================
+   EDITORIAL / COLEÇÃO
+   ============================================================= */
+.editorial { position: relative; padding: clamp(80px, 12vh, 150px) 0 clamp(90px, 14vh, 168px); background: var(--paper-2); }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(40px, 6vw, 76px); }
+.section-head h2 {
+  font-family: var(--display); font-weight: 300; font-optical-sizing: auto;
+  font-size: clamp(2.1rem, 5.2vw, 3.8rem); line-height: 1; letter-spacing: -.02em;
+  font-variation-settings: "SOFT" 30;
+}
+.section-head h2 em { font-style: italic; color: var(--wine); }
+.section-head p { color: var(--ink-soft); max-width: 34ch; font-size: 1.02rem; }
+
+.looks { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(14px, 2vw, 26px); }
+.look { position: relative; overflow: hidden; background: var(--blush-2); }
+.look:nth-child(1) { grid-column: 1 / 6;  aspect-ratio: 3/4;  align-self: start; }
+.look:nth-child(2) { grid-column: 7 / 13; aspect-ratio: 4/5;  margin-top: clamp(30px, 7vw, 96px); }
+.look:nth-child(3) { grid-column: 3 / 10; aspect-ratio: 16/11; margin-top: clamp(10px, 2vw, 26px); }
+.look button.look__hit { display: block; width: 100%; height: 100%; padding: 0; }
+.look img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease), filter 1.1s var(--ease); filter: saturate(.98); }
+.look:hover img { transform: scale(1.05); filter: saturate(1.05); }
+.look__ph { width: 100%; height: 100%; display: grid; place-content: center; gap: 6px; text-align: center;
+  background: linear-gradient(135deg, var(--blush) 0%, var(--blush-2) 100%); color: var(--wine); }
+.look__ph b { font-family: var(--display); font-style: italic; font-size: 1.3rem; }
+.look__ph small { font-family: var(--body); letter-spacing: .2em; text-transform: uppercase; font-size: .62rem; color: var(--ink-soft); }
+.look__cap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none;
+  padding: 22px; color: #fff;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+  background: linear-gradient(0deg, rgba(20,15,13,.62), transparent);
+  opacity: 0; transform: translateY(8px); transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+.look:hover .look__cap, .look:focus-within .look__cap { opacity: 1; transform: none; }
+.look__cap .n { font-family: var(--body); font-size: .7rem; letter-spacing: .22em; opacity: .85; }
+.look__cap .t { font-family: var(--display); font-style: italic; font-size: 1.28rem; }
+.look__cap .view { font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.6); padding: 6px 12px; border-radius: 2px; }
+.editorial__cta { margin-top: clamp(46px, 7vw, 80px); display: flex; justify-content: center; }
+
+/* =============================================================
+   LEGADO (banda espresso · coração emocional)
+   ============================================================= */
+.legacy { position: relative; background: var(--espresso); color: var(--paper); padding: clamp(96px, 16vh, 190px) 0; overflow: hidden; }
+.legacy::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; opacity: .16;
+  background: radial-gradient(90% 70% at 20% 0%, #6E4A46 0%, transparent 60%),
+              radial-gradient(80% 80% at 90% 100%, #8C3B47 0%, transparent 55%);
+}
+.legacy .wrap { position: relative; z-index: 1; max-width: 900px; text-align: center; }
+.legacy .eyebrow { color: #E7C7C0; justify-content: center; }
+.legacy .eyebrow::before { background: #E7C7C0; }
+.legacy h2 {
+  font-family: var(--display); font-weight: 300; font-optical-sizing: auto;
+  font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.12; letter-spacing: -.01em; margin-top: 20px;
+  font-variation-settings: "SOFT" 50;
+}
+.legacy h2 em { font-style: italic; color: #E7A9A0; }
+.legacy__note { margin-top: 30px; font-size: clamp(1.02rem, 1.5vw, 1.18rem); line-height: 1.85; color: #E9DED8; font-weight: 300; }
+.legacy__note p + p { margin-top: 1.1em; }
+.legacy__sign { margin-top: 40px; }
+.legacy__sign .from { font-family: var(--body); font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: #C9B7B0; }
+.legacy__sign .names { font-family: var(--script); font-size: clamp(2.2rem, 5vw, 3rem); color: #F3E7E2; line-height: 1; margin-top: 6px; }
+
+/* =============================================================
+   COMO FUNCIONA
+   ============================================================= */
+.how { position: relative; padding: clamp(90px, 14vh, 168px) 0; background: var(--paper); }
+.how__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); }
+.how__card { background: var(--paper); padding: clamp(26px, 3vw, 42px); display: flex; flex-direction: column; gap: 14px; transition: background .4s var(--ease); text-align: left; }
+.how__card:hover { background: var(--blush-2); }
+.how__ic { color: var(--wine); }
+.how__card h3 { font-family: var(--display); font-weight: 400; font-size: 1.35rem; }
+.how__card p { color: var(--ink-soft); font-size: .96rem; }
+.how__card ul { margin: 6px 0 0; padding: 0; list-style: none; color: var(--ink-soft); font-size: .92rem; line-height: 1.9; }
+.how__card ul strong { color: var(--ink); font-weight: 600; }
+.how__num { font-family: var(--display); font-style: italic; color: var(--wine); font-size: .95rem; }
+
+/* =============================================================
+   DEPOIMENTOS
+   ============================================================= */
+.voices { position: relative; padding: clamp(80px, 12vh, 150px) 0 clamp(96px, 15vh, 180px); background: var(--paper-2); }
+.voices .section-head { justify-content: center; text-align: center; }
+.voices__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(18px, 2.4vw, 30px); }
+.voice { background: var(--paper); border: 1px solid var(--hairline); padding: clamp(28px, 3vw, 40px); display: flex; flex-direction: column; gap: 20px; position: relative; }
+.voice__quote { font-family: var(--display); font-weight: 300; font-style: italic; font-size: 1.24rem; line-height: 1.5; color: var(--ink); }
+.voice__mark { font-family: var(--display); font-size: 3.4rem; line-height: .5; color: var(--blush); height: 22px; }
+.voice__who { display: flex; align-items: center; gap: 14px; margin-top: auto; }
+.voice__avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; background: var(--blush); display: grid; place-content: center; overflow: hidden; flex: 0 0 auto; }
+.voice__avatar span { font-family: var(--display); font-style: italic; color: var(--wine); font-size: 1.05rem; }
+.voice__name { font-weight: 600; font-size: .96rem; }
+.voice__handle { color: var(--ink-soft); font-size: .82rem; }
+
+/* =============================================================
+   FOOTER
+   ============================================================= */
+.footer { background: var(--ink); color: var(--paper); }
+.footer__cta { text-align: center; padding: clamp(80px, 13vh, 150px) var(--gutter); border-bottom: 1px solid rgba(246,240,233,.12); }
+.footer__cta h2 { font-family: var(--display); font-weight: 300; font-optical-sizing: auto; font-size: clamp(1.9rem, 4.4vw, 3.2rem); line-height: 1.08; letter-spacing: -.01em; }
+.footer__cta h2 em { font-style: italic; color: #E7A9A0; }
+.footer__cta p { color: #C9B7B0; margin-top: 16px; font-size: 1.05rem; }
+.footer__cta .btn { margin-top: 30px; }
+.footer__links { display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap; padding: clamp(40px, 6vw, 64px) var(--gutter); }
+.footer__brand { font-family: var(--script); font-size: 2.4rem; line-height: 1; }
+.footer__loc { display: inline-flex; align-items: center; gap: 8px; color: #C9B7B0; font-size: .9rem; letter-spacing: .04em; margin-top: 8px; text-decoration: none; transition: color .3s var(--ease); }
+.footer__loc:hover { color: var(--paper); }
+.footer__social { display: flex; align-items: center; gap: 10px; }
+.footer__social a { width: 44px; height: 44px; display: grid; place-content: center; border: 1px solid rgba(246,240,233,.22); border-radius: 50%; transition: background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease); }
+.footer__social a:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.footer__legal { padding: 22px var(--gutter) 34px; text-align: center; color: #9A8B84; font-size: .78rem; letter-spacing: .02em; }
+.footer__legal .tag { font-family: var(--display); font-style: italic; color: #C9B7B0; display: block; margin-bottom: 8px; font-size: .95rem; }
+
+/* =============================================================
+   MODAL (contato / lightbox)
+   ============================================================= */
+.overlay { position: fixed; inset: 0; z-index: 300; background: rgba(20,15,13,.62); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 24px; animation: fade .3s var(--ease); }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--paper); color: var(--ink); width: min(460px, 100%); border-radius: 3px; padding: clamp(28px, 4vw, 44px); position: relative; animation: pop .4s var(--ease); }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+.modal__close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; display: grid; place-content: center; border-radius: 50%; color: var(--ink-soft); transition: background .3s var(--ease); }
+.modal__close:hover { background: var(--blush-2); }
+.modal .eyebrow { justify-content: flex-start; }
+.modal h3 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin-top: 12px; }
+.modal p { color: var(--ink-soft); margin-top: 8px; }
+.modal__opts { display: grid; gap: 12px; margin-top: 24px; }
+.modal__opts .btn { justify-content: center; width: 100%; }
+
+.lightbox img { width: min(88vw, 620px); max-height: 86vh; object-fit: contain; border-radius: 2px; }
+.lightbox .modal__close { background: rgba(246,240,233,.9); }
+
+/* =============================================================
+   DOCK DE ACESSIBILIDADE + ÁUDIO
+   ============================================================= */
+.dock { position: fixed; right: 16px; bottom: 16px; z-index: 150; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.dock__group { display: flex; align-items: center; gap: 2px; background: var(--paper); border: 1px solid var(--hairline); border-radius: 999px; padding: 4px; box-shadow: 0 8px 30px rgba(43,35,32,.12); }
+.dock__btn { width: 40px; height: 40px; border-radius: 999px; display: grid; place-content: center; color: var(--ink); transition: background .3s var(--ease); font-size: .82rem; letter-spacing: .02em; }
+.dock__btn:hover { background: var(--blush-2); }
+.dock__btn[aria-pressed="true"], .dock__btn.active { background: var(--wine); color: #fff; }
+.dock__label { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); padding: 0 8px; }
+.audio-toggle { display: inline-flex; align-items: center; gap: 10px; background: var(--paper); border: 1px solid var(--hairline); border-radius: 999px; padding: 8px 14px 8px 10px; color: var(--ink); box-shadow: 0 8px 30px rgba(43,35,32,.12); transition: background .3s var(--ease); }
+.audio-toggle:hover { background: var(--blush-2); }
+.audio-toggle .ic { color: var(--wine); display: grid; place-content: center; }
+.audio-toggle .txt { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; }
+/* toggle no header */
+.header-audio { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid color-mix(in srgb, currentColor 38%, transparent); transition: background .3s var(--ease), border-color .3s var(--ease); }
+.header-audio:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+.header-audio .ic { display: grid; place-content: center; }
+.header-audio .txt { font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; }
+.site-header.solid .header-audio[aria-pressed="true"] { background: var(--wine); color: #fff; border-color: var(--wine); }
+
+/* pulso suave para convidar ao som (para quando reduced-motion off) */
+.audio-invite { position: relative; }
+.audio-invite::after { content: ""; position: absolute; inset: -4px; border-radius: 999px; border: 1px solid var(--wine); opacity: 0; animation: ring 2.6s var(--ease) 1.2s 3; }
+@keyframes ring { 0% { opacity: .5; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
+@media (prefers-reduced-motion: reduce) { .audio-invite::after { animation: none; } }
+
+/* =============================================================
+   RESPONSIVO
+   ============================================================= */
+@media (max-width: 900px) {
+  .manifesto .grid { grid-template-columns: 1fr; gap: 30px; }
+  .looks { display: flex; flex-direction: column; }
+  .look:nth-child(1), .look:nth-child(2), .look:nth-child(3) { grid-column: auto; margin-top: 0; aspect-ratio: 4/5; }
+  .look__cap { opacity: 1; transform: none; }
+  .seam { display: none; }
+}
+@media (max-width: 560px) {
+  .site-header { padding: 14px var(--gutter); }
+  .brand { font-size: 1.55rem; }
+  .hero__cta .btn { width: 100%; justify-content: center; }
+  .footer__links { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<!-- HEADER -->
+<header class="site-header" id="header">
+  <a href="#top" class="brand" aria-label="Amare, página inicial">amare<small>est. 2015 · Teresópolis</small></a>
+  <div class="header-right">
+    <button class="header-audio audio-invite" id="audioBtn" aria-pressed="false" aria-label="Ativar música ambiente">
+      <span class="ic" id="audioIc" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </span>
+      <span class="txt" id="audioTxt">Som</span>
+    </button>
+  </div>
+</header>
+
+<main id="conteudo">
+  <a id="top"></a>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__media">
+      <img class="kenburns" src="./src/assets/hero.jpeg" alt="Retrato editorial Amare: mulher em peça atemporal, luz suave e afetiva." onerror="phFail(this)" />
+    </div>
+    <div class="hero__inner">
+      <p class="eyebrow reveal">Irmãs Amare · desde 2015</p>
+      <h1 id="hero-title" class="reveal d1">Vista a sua <em>história</em></h1>
+      <p class="hero__sub reveal d2">Um ensaio sobre a beleza de ser quem você é. Moda atemporal, com atendimento que lembra o seu nome.</p>
+      <div class="hero__cta reveal d3">
+        <button class="btn btn--wine" data-contact><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z"/></svg>Falar no WhatsApp</button>
+        <a class="link-underline" href="#colecao" style="color:#F3E7E2">Ver o editorial</a>
+      </div>
+    </div>
+    <span class="hero__scroll" aria-hidden="true"><span>role</span><span class="line"></span></span>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto" aria-labelledby="about-title">
+    <span class="seam" aria-hidden="true"><span class="seam-node" style="top:0"></span><span class="seam-node" style="top:100%"></span></span>
+    <div class="wrap grid">
+      <div>
+        <p class="eyebrow reveal">A Amare</p>
+        <p class="manifesto__lede reveal d1">Desde 2015, criando <span class="accent">conexões reais</span> através da moda.</p>
+      </div>
+      <div class="manifesto__body reveal d1">
+        <p>A Amare nasce do encontro entre estilo e essência, para mulheres que se expressam com autenticidade e enxergam na forma de se vestir uma extensão de quem são.</p>
+        <p>Cada peça é escolhida com intenção, não apenas para vestir, mas para valorizar, acolher e traduzir a sua identidade. Dez anos de um atendimento que é quase carta escrita à mão: perto, atento, feito por duas irmãs.</p>
+        <div class="pillars">
+          <span>Identidade</span><span>Proximidade</span><span>Essência</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITORIAL -->
+  <section class="editorial" id="colecao" aria-labelledby="collection-title">
+    <span class="seam" aria-hidden="true"><span class="seam-node" style="top:0"></span></span>
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow reveal">Editorial</p>
+          <h2 id="collection-title" class="reveal d1">Editorial <em>Essência</em></h2>
+        </div>
+        <p class="reveal d1">Retratos de afeto e estilo que atravessam gerações.</p>
+      </div>
+      <div class="looks">
+        <figure class="look reveal">
+          <button class="look__hit" data-look="0" aria-label="Ampliar look Herança e Estilo">
+            <img src="./src/assets/look1.jpeg" alt="Look Herança e Estilo: peça atemporal em retrato editorial." onerror="phFail(this,'Herança e Estilo')" />
+          </button>
+          <figcaption class="look__cap"><span><span class="n">01</span> <span class="t">Herança e Estilo</span></span><span class="view">Ampliar</span></figcaption>
+        </figure>
+        <figure class="look reveal d1">
+          <button class="look__hit" data-look="1" aria-label="Ampliar look Detalhes de Afeto">
+            <img src="./src/assets/look2.jpeg" alt="Look Detalhes de Afeto: composição delicada e afetiva." onerror="phFail(this,'Detalhes de Afeto')" />
+          </button>
+          <figcaption class="look__cap"><span><span class="n">02</span> <span class="t">Detalhes de Afeto</span></span><span class="view">Ampliar</span></figcaption>
+        </figure>
+        <figure class="look reveal d2">
+          <button class="look__hit" data-look="2" aria-label="Ampliar look Laços que Inspiram">
+            <img src="./src/assets/look3.jpeg" alt="Look Laços que Inspiram: retrato que celebra vínculos e gerações." onerror="phFail(this,'Laços que Inspiram')" />
+          </button>
+          <figcaption class="look__cap"><span><span class="n">03</span> <span class="t">Laços que Inspiram</span></span><span class="view">Ampliar</span></figcaption>
+        </figure>
+      </div>
+      <div class="editorial__cta reveal"><button class="btn" data-contact>Inspire-se e fale conosco</button></div>
+    </div>
+  </section>
+
+  <!-- LEGADO -->
+  <section class="legacy" aria-labelledby="legacy-title">
+    <div class="wrap">
+      <p class="eyebrow reveal">Um capítulo em pausa</p>
+      <h2 id="legacy-title" class="reveal d1">Fechamos a porta da loja em 2025, mas não a <em>história</em>.</h2>
+      <div class="legacy__note reveal d1">
+        <p>Por dez anos, a Amare foi um espaço físico de moda atemporal e de personalidade, com um atendimento que era só nosso. Hoje escolhemos uma pausa para cuidar do que veio primeiro: nossos filhos, nossa família.</p>
+        <p>Esta página é um voto. Um legado que deixamos plantado para que, no tempo certo, a Amare volte a vestir vocês, agora também em um e-commerce, com o mesmo afeto de sempre.</p>
+      </div>
+      <div class="legacy__sign reveal d2">
+        <span class="from">com amor,</span>
+        <div class="names">Jéssica &amp; Raquel</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="how" aria-labelledby="how-title">
+    <span class="seam" aria-hidden="true"><span class="seam-node" style="top:0"></span></span>
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow reveal">A experiência</p>
+          <h2 id="how-title" class="reveal d1">Como a gente <em>cuida</em> de você</h2>
+        </div>
+        <p class="reveal d1">Do primeiro "oi" à peça na sua porta, tudo com toque humano.</p>
+      </div>
+      <div class="how__grid">
+        <div class="how__card reveal">
+          <span class="how__ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z"/></svg></span>
+          <span class="how__num">01</span>
+          <h3>Atendimento no WhatsApp</h3>
+          <p>Conexão direta e personalizada: você fala com a Jéssica ou com a Raquel, de verdade.</p>
+        </div>
+        <div class="how__card reveal d1">
+          <span class="how__ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="6" width="15" height="11" rx="1"/><path d="M16 9h4l3 3v5h-7"/><circle cx="6" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg></span>
+          <span class="how__num">02</span>
+          <h3>Envio nacional</h3>
+          <ul><li><strong>Teresópolis:</strong> entrega rápida via motoboy.</li><li><strong>Todo o Brasil:</strong> Correios, rastreável.</li></ul>
+        </div>
+        <div class="how__card reveal d2">
+          <span class="how__ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+          <span class="how__num">03</span>
+          <h3>Pagamento facilitado</h3>
+          <ul><li><strong>Crédito:</strong> até 6x sem juros.</li><li><strong>Pix:</strong> 5% de desconto.</li><li><strong>Débito:</strong> rápido e seguro.</li></ul>
+        </div>
+        <div class="how__card reveal d3">
+          <span class="how__ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+          <span class="how__num">04</span>
+          <h3>Consultoria de estilo</h3>
+          <p>Ajuda individual pra escolher o que combina com você, sem pressa, do seu jeito.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="voices" aria-labelledby="voices-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow reveal" style="justify-content:center">A voz de quem veste</p>
+          <h2 id="voices-title" class="reveal d1">Quem passou por aqui, <em>lembra</em></h2>
+        </div>
+      </div>
+      <div class="voices__grid" id="voices"></div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__cta">
+    <h2 class="reveal">Uma nova seleção, pronta para te <em>inspirar</em>.</h2>
+    <p class="reveal d1">Conheça de perto e encontre o que faz sentido pra você.</p>
+    <button class="btn btn--ghost on-dark reveal d1" data-contact><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z"/></svg>Falar no WhatsApp</button>
+  </div>
+  <div class="footer__links">
+    <div>
+      <div class="footer__brand">amare</div>
+      <a class="footer__loc" href="https://www.google.com/maps/search/?api=1&query=Teresópolis,+RJ" target="_blank" rel="noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Teresópolis, RJ
+      </a>
+    </div>
+    <nav class="footer__social" aria-label="Redes sociais">
+      <a href="https://www.instagram.com/amare.fashion" target="_blank" rel="noreferrer" aria-label="Instagram da Amare">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="https://www.tiktok.com" target="_blank" rel="noreferrer" aria-label="TikTok da Amare">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a5 5 0 0 0 5 5v3a8 8 0 0 1-5-1.7V15a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.1a3 3 0 1 0 2 2.8V3h3z"/></svg>
+      </a>
+      <a href="https://wa.me/5521996032769" target="_blank" rel="noreferrer" aria-label="WhatsApp da Amare">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z"/></svg>
+      </a>
+    </nav>
+  </div>
+  <div class="footer__legal">
+    <span class="tag">Um legado em pausa, semeando o futuro.</span>
+    © <span id="year"></span> Amare · Feito com afeto por Jéssica &amp; Raquel em Teresópolis.
+  </div>
+</footer>
+
+<!-- DOCK ACESSIBILIDADE -->
+<div class="dock">
+  <div class="dock__group" role="group" aria-label="Tamanho do texto">
+    <button class="dock__btn" id="fMinus" aria-label="Diminuir texto">A−</button>
+    <span class="dock__label">Texto</span>
+    <button class="dock__btn" id="fPlus" aria-label="Aumentar texto">A+</button>
+  </div>
+</div>
+
+<audio id="ambient" src="./src/assets/ambient-music.mp3" loop preload="none"></audio>
+
+<script>
+/* ---- placeholder para imagens ausentes (preview isolado) ---- */
+function phFail(img, label){
+  var box = img.closest('.hero__media') || img.parentElement;
+  img.style.display='none';
+  if(box.classList.contains('hero__media')) return; /* hero usa gradiente de fundo */
+  if(box.querySelector('.look__ph')) return;
+  var ph=document.createElement('div');
+  ph.className='look__ph';
+  ph.innerHTML='<b>'+(label||'Amare')+'</b><small>sua imagem aqui</small>';
+  box.appendChild(ph);
+}
+
+/* ---- depoimentos (avatar opcional: preencha "avatar" com a URL da foto) ---- */
+var TESTIMONIALS=[
+  { name:"Camila F.", handle:"@camilaferreira", avatar:"", text:"A experiência de compra foi impecável. Dá pra sentir o cuidado em cada detalhe da embalagem, do início ao fim." },
+  { name:"Mariana S.", handle:"@mari_silva", avatar:"", text:"Atendimento incrível, me senti super segura comprando. As peças vestem perfeitamente e abraçam o corpo." },
+  { name:"Juliana R.", handle:"@jurodrigues", avatar:"", text:"Finalmente roupas que acompanham meu ritmo sem perder a elegância. Amei a minha escolha da Coleção Essência." }
+];
+(function(){
+  var g=document.getElementById('voices');
+  TESTIMONIALS.forEach(function(t,i){
+    var initials=t.name.split(' ').map(function(s){return s[0];}).join('').slice(0,2);
+    var av = t.avatar
+      ? '<img class="voice__avatar" src="'+t.avatar+'" alt="Foto de '+t.name+'" />'
+      : '<span class="voice__avatar"><span aria-hidden="true">'+initials+'</span></span>';
+    var el=document.createElement('article');
+    el.className='voice reveal'+(i? ' d'+i:'');
+    el.innerHTML='<span class="voice__mark" aria-hidden="true">&ldquo;</span>'+
+      '<p class="voice__quote">'+t.text+'</p>'+
+      '<div class="voice__who">'+av+'<div><div class="voice__name">'+t.name+'</div><div class="voice__handle">'+t.handle+'</div></div></div>';
+    g.appendChild(el);
+  });
+})();
+
+/* ---- header sólido ao rolar ---- */
+var header=document.getElementById('header');
+var onScroll=function(){ header.classList.toggle('solid', window.scrollY>60); };
+onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+/* ---- reveal ao rolar ---- */
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(reduce){ document.querySelectorAll('.reveal').forEach(function(e){e.classList.add('is-in');}); }
+else {
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target);} });
+  },{ threshold:.12, rootMargin:'0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(function(e){io.observe(e);});
+}
+
+/* ---- tamanho do texto ---- */
+var fs=1, root=document.documentElement;
+function setFs(v){ fs=Math.min(1.5, Math.max(.85, Math.round(v*100)/100)); root.style.setProperty('--fs', fs); }
+document.getElementById('fPlus').addEventListener('click',function(){ setFs(fs+.1); });
+document.getElementById('fMinus').addEventListener('click',function(){ setFs(fs-.1); });
+
+/* ---- música ambiente (com fade) ---- */
+var audio=document.getElementById('ambient'), aBtn=document.getElementById('audioBtn'),
+    aTxt=document.getElementById('audioTxt'), aIc=document.getElementById('audioIc'), playing=false, fadeT;
+var icOn='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+var icOff='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+function fade(to,cb){ clearInterval(fadeT); var step=(to-audio.volume)/12; fadeT=setInterval(function(){ var v=audio.volume+step; if((step>0&&v>=to)||(step<0&&v<=to)){ audio.volume=Math.max(0,Math.min(1,to)); clearInterval(fadeT); cb&&cb(); } else audio.volume=v; },40); }
+aBtn.addEventListener('click',function(){
+  aBtn.classList.remove('audio-invite');
+  if(!playing){
+    audio.volume=0;
+    var p=audio.play();
+    if(p&&p.catch) p.catch(function(){});
+    fade(.45); playing=true; aBtn.setAttribute('aria-pressed','true'); aBtn.setAttribute('aria-label','Desativar música ambiente'); aTxt.textContent='Som ON'; aIc.innerHTML=icOn; aBtn.classList.add('active');
+  } else {
+    fade(0,function(){ audio.pause(); }); playing=false; aBtn.setAttribute('aria-pressed','false'); aBtn.setAttribute('aria-label','Ativar música ambiente'); aTxt.textContent='Som'; aIc.innerHTML=icOff; aBtn.classList.remove('active');
+  }
+});
+
+/* ---- modal de contato ---- */
+var CONTACTS=[
+  { name:'Jéssica', wa:'5521996032769' },
+  { name:'Raquel', wa:'5521967077361' }
+];
+var lastFocus=null;
+function openOverlay(node){
+  lastFocus=document.activeElement;
+  document.body.appendChild(node);
+  document.body.style.overflow='hidden';
+  var f=node.querySelector('button, a, [tabindex]'); f&&f.focus();
+  node.addEventListener('keydown',trap);
+}
+function closeOverlay(node){
+  node.remove(); document.body.style.overflow=''; lastFocus&&lastFocus.focus();
+}
+function trap(e){
+  if(e.key==='Escape'){ closeOverlay(e.currentTarget); return; }
+  if(e.key!=='Tab') return;
+  var f=e.currentTarget.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])');
+  if(!f.length) return; var first=f[0], last=f[f.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+}
+function contactModal(){
+  var ov=document.createElement('div'); ov.className='overlay';
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeOverlay(ov); });
+  var opts=CONTACTS.map(function(c){ return '<a class="btn btn--wine" target="_blank" rel="noreferrer" href="https://wa.me/'+c.wa+'?text='+encodeURIComponent('Olá, '+c.name+'! Vim pelo site da Amare e gostaria de um atendimento.')+'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z"/></svg>Falar com '+c.name+'</a>'; }).join('');
+  ov.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">'+
+    '<button class="modal__close" aria-label="Fechar">'+
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>'+
+    '<p class="eyebrow">Atendimento Amare</p>'+
+    '<h3 id="mtitle">Com quem você quer falar?</h3>'+
+    '<p>Atendimento humano, de irmã pra você.</p>'+
+    '<div class="modal__opts">'+opts+'</div></div>';
+  ov.querySelector('.modal__close').addEventListener('click',function(){ closeOverlay(ov); });
+  openOverlay(ov);
+}
+document.querySelectorAll('[data-contact]').forEach(function(b){ b.addEventListener('click',contactModal); });
+
+/* ---- lightbox ---- */
+var LOOKS=[
+  { src:'./src/assets/look1.jpeg', t:'Herança e Estilo' },
+  { src:'./src/assets/look2.jpeg', t:'Detalhes de Afeto' },
+  { src:'./src/assets/look3.jpeg', t:'Laços que Inspiram' }
+];
+document.querySelectorAll('[data-look]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var l=LOOKS[+b.dataset.look];
+    var ov=document.createElement('div'); ov.className='overlay lightbox';
+    ov.addEventListener('click',function(e){ if(e.target===ov) closeOverlay(ov); });
+    ov.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-label="'+l.t+'" style="background:transparent;padding:0">'+
+      '<button class="modal__close" aria-label="Fechar">'+
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>'+
+      '<img src="'+l.src+'" alt="'+l.t+'" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'look__ph\',style:\'width:min(80vw,420px);aspect-ratio:3/4\',innerHTML:\'<b>'+l.t+'</b><small>sua imagem aqui</small>\'}))" /></div>';
+    ov.querySelector('.modal__close').addEventListener('click',function(){ closeOverlay(ov); });
+    openOverlay(ov);
+  });
+});
+
+document.getElementById('year').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
