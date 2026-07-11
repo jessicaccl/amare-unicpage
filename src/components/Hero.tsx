@@ -24,7 +24,6 @@ export function Hero({ onContact }: { onContact: () => void }) {
           <a className="link-underline" href="#colecao" style={{ color: '#F3E7E2' }}>Ver o editorial</a>
         </Reveal>
       </div>
-      <span className="hero__scroll" aria-hidden="true"><span>role</span><span className="line" /></span>
     </section>
   );
 }

@@ -1,6 +1,9 @@
 import look1 from '../assets/look1.jpeg';
 import look2 from '../assets/look2.jpeg';
 import look3 from '../assets/look3.jpeg';
+import loja1 from '../assets/loja1.jpeg';
+import loja2 from '../assets/loja2.jpeg';
+import loja3 from '../assets/loja3.jpeg';
 
 /**
  * Todo o conteúdo editável da página em um só lugar.
@@ -59,6 +62,19 @@ export const LEGACY = {
   ],
   signFrom: 'com amor,',
   signNames: 'Jéssica & Raquel',
+};
+
+export type GalleryPhoto = { image: string; alt: string };
+
+/** Carrossel do último dia da loja (julho de 2025). A foto das irmãs vem primeiro. */
+export const STORE_GALLERY = {
+  eyebrow: 'O último dia · julho de 2025',
+  caption: 'Um até logo cheio de afeto, ao lado de quem construiu a Amare com a gente.',
+  photos: [
+    { image: loja1, alt: 'Jéssica e Raquel, as irmãs Amare, juntas no último dia da loja.' },
+    { image: loja2, alt: 'Interior da loja Amare no último dia, com araras de roupas e mesa posta.' },
+    { image: loja3, alt: 'Mesa de despedida com quitutes e o letreiro Amare ao fundo.' },
+  ] as GalleryPhoto[],
 };
 
 export type Step = { icon: 'chat' | 'ship' | 'card' | 'user'; number: string; title: string; text?: string; list?: { label: string; value: string }[] };

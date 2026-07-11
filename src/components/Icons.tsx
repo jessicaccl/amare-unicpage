@@ -16,7 +16,7 @@ const base = (size = 24): SVGProps<SVGSVGElement> => ({
 });
 
 export const IconWhatsApp = ({ size, ...p }: IconProps) => (
-  <svg {...base(size)} {...p}><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l2-5.5a8.5 8.5 0 0 1 16-4z" /></svg>
+  <svg {...base(size)} strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20.5 11.6a8.4 8.4 0 0 1-11.9 7.6l-4 1.2a.6.6 0 0 1-.8-.8l1.2-4A8.4 8.4 0 1 1 20.5 11.6z" /></svg>
 );
 
 export const IconShip = ({ size, ...p }: IconProps) => (

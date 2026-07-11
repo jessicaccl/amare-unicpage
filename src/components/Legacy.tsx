@@ -1,5 +1,6 @@
 import { Reveal } from './Reveal';
-import { LEGACY } from '../data/content';
+import { Carousel } from './Carousel';
+import { LEGACY, STORE_GALLERY } from '../data/content';
 
 export function Legacy() {
   return (
@@ -15,6 +16,12 @@ export function Legacy() {
         <Reveal delay={2} className="legacy__sign">
           <span className="from">{LEGACY.signFrom}</span>
           <div className="names">{LEGACY.signNames}</div>
+        </Reveal>
+
+        <Reveal className="gallery">
+          <p className="eyebrow">{STORE_GALLERY.eyebrow}</p>
+          <Carousel photos={STORE_GALLERY.photos} label="Fotos do último dia da loja Amare" />
+          <p className="gallery__caption">{STORE_GALLERY.caption}</p>
         </Reveal>
       </div>
     </section>

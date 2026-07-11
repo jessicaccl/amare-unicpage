@@ -89,7 +89,3 @@ npm uninstall styled-components @phosphor-icons/react react-icons @types/styled-
 - **Áudio**: navegadores bloqueiam autoplay com som; a música só toca após o clique no botão "Som" (no header). Volume entra e sai com *fade*.
 - **Movimento reduzido**: se o sistema pedir `prefers-reduced-motion`, animações e reveals são desligados e o conteúdo aparece imediatamente.
 - **Imagens**: são importadas (`import hero from '../assets/hero.jpeg'`), então o Vite versiona e otimiza. As mesmas do repositório atual.
-
-## Preview
-
-`preview.html` é um espelho autossuficiente do design (mesmo CSS), para você sentir a experiência sem subir o Vite. Se abri-lo **dentro da pasta do projeto** (com `assets/` acessível ao lado), as imagens e a música carregam; isolado, as imagens aparecem como um marcador elegante e o resto funciona igual.
